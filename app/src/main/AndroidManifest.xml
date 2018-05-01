@@ -26,6 +26,10 @@
         <activity
             android:name=".AddContentActivity"
             android:label="@string/title_activity_add_content"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BrowseActivity"
+            android:label="@string/title_activity_browse"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
