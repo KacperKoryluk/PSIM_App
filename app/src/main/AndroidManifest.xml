@@ -26,15 +26,19 @@
         <activity
             android:name=".AddContentActivity"
             android:label="@string/title_activity_add_content"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BrowseActivity"
             android:label="@string/title_activity_browse"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <!-- TODO: Remove android:exported - that's for single activity debug puropses -->
         <activity
             android:name=".BoardActivity"
-            android:exported="true"></activity>
+            android:label="@string/board"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
