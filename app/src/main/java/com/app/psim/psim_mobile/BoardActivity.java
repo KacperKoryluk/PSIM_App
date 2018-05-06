@@ -24,6 +24,8 @@ import java.util.List;
 public class BoardActivity extends AppCompatActivity {
 
     private ListView postListView;
+    private ArrayList<Post> postList;
+    private BoardListViewAdapter postListAdapter;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
@@ -34,24 +36,16 @@ public class BoardActivity extends AppCompatActivity {
 
         //TODO: Remove debug and implement downloading post headers from server
         //DEBUG
-        List<Post> list = new ArrayList<Post>();
-        list.add(new Post("Kappa", null, "I can read sumthing", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Przeciez to sie nie godzi by tak bylo", null, "This text must be very long so i can check if the maximum height property is doing it's work. Please be patient. Somebody once told me that you have a boyfriend that looks like a girlfriend that i had in february of lat year. Please be patient. Somebody once told me that you have a boyfriend that looks like a girlfriend that i had in february of lat year.", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        list.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
+        postList = new ArrayList<Post>();
+        postList.add(new Post("Kappa", null, "I can read sumthing", "", "Xemur"));
+        postList.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
+        postList.add(new Post("Przeciez to sie nie godzi by tak bylo", null, "This text must be very long so i can check if the maximum height property is doing it's work. Please be patient. Somebody once told me that you have a boyfriend that looks like a girlfriend that i had in february of lat year. Please be patient. Somebody once told me that you have a boyfriend that looks like a girlfriend that i had in february of lat year.", "", "Xemur"));
         //END DEBUG
 
 
         postListView = (ListView)findViewById(R.id.board_postListView);
-        BoardListViewAdapter adapter = new BoardListViewAdapter(this, R.layout.view_board_post, list);
-        postListView.setAdapter(adapter);
+        postListAdapter = new BoardListViewAdapter(this, R.layout.view_board_post, postList);
+        postListView.setAdapter(postListAdapter);
         postListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -77,14 +71,14 @@ public class BoardActivity extends AppCompatActivity {
                         {
                             case R.id.drawer_addpost:
                                 intent = new Intent(getBaseContext(), AddContentActivity.class);
-                                break;
+                                startActivityForResult(intent, 1);
+                                return true;
                             case R.id.drawer_search:
                                 intent = new Intent(getBaseContext(), BrowseActivity.class);
-                                break;
+                                startActivityForResult(intent, 2);
+                                return true;
                         }
-                        if(intent != null)
-                            startActivity(intent);
-                        return true;
+                        return false;
                     }
                 }
         );
@@ -99,5 +93,21 @@ public class BoardActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1 && resultCode == RESULT_OK)
+        {
+            Post post = data.getParcelableExtra("created_post_data");
+            postList.add(post);
+            postListAdapter.notifyDataSetChanged();
+        }
+        if(requestCode == 2 && resultCode == RESULT_OK)
+        {
+            String tags = data.getStringExtra("tags_data");
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
