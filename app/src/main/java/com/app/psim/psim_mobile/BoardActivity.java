@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import com.app.psim.psim_mobile.components.BoardListViewAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BoardActivity extends AppCompatActivity {
@@ -28,20 +29,14 @@ public class BoardActivity extends AppCompatActivity {
     private BoardListViewAdapter postListAdapter;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private boolean displaysSearchResults = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
 
-        //TODO: Remove debug and implement downloading post headers from server
-        //DEBUG
-        postList = new ArrayList<Post>();
-        postList.add(new Post("Kappa", null, "I can read sumthing", "", "Xemur"));
-        postList.add(new Post("Hekken Mekken", null, "Das is a nice description", "", "Xemur"));
-        postList.add(new Post("Przeciez to sie nie godzi by tak bylo", null, "This text must be very long so i can check if the maximum height property is doing it's work. Please be patient. Somebody once told me that you have a boyfriend that looks like a girlfriend that i had in february of lat year. Please be patient. Somebody once told me that you have a boyfriend that looks like a girlfriend that i had in february of lat year.", "", "Xemur"));
-        //END DEBUG
-
+        postList = (ArrayList<Post>)DataManager.Singleton().GetPosts();
 
         postListView = (ListView)findViewById(R.id.board_postListView);
         postListAdapter = new BoardListViewAdapter(this, R.layout.view_board_post, postList);
@@ -96,17 +91,37 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if(displaysSearchResults == true)
+        {
+            displaysSearchResults = false;
+            List<Post> posts = DataManager.Singleton().GetPosts();
+            postList.clear();
+            postList.addAll(posts);
+            postListAdapter.notifyDataSetChanged();
+        }
+        else
+            super.onBackPressed();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1 && resultCode == RESULT_OK)
         {
             Post post = data.getParcelableExtra("created_post_data");
+            DataManager.Singleton().AddPost(post);
             postList.add(post);
             postListAdapter.notifyDataSetChanged();
         }
         if(requestCode == 2 && resultCode == RESULT_OK)
         {
+            displaysSearchResults = true;
             String tags = data.getStringExtra("tags_data");
-
+            List<String> tagList = new ArrayList<String>(Arrays.asList(tags.split("[ #]")));
+            List<Post> posts = DataManager.Singleton().GetPosts(tagList);
+            postList.clear();
+            postList.addAll(posts);
+            postListAdapter.notifyDataSetChanged();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

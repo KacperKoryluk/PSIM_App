@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,6 +43,10 @@ public class BoardListViewAdapter extends ArrayAdapter<Post> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             view = inflater.inflate(R.layout.view_board_post, null);
             Log.println(Log.DEBUG, "DEBUG", "View Created");
+
+            Animation animation = AnimationUtils
+                    .loadAnimation(getContext(), R.anim.post_zoomin);
+            view.startAnimation(animation);
         }
         Post item = getItem(position);
 
@@ -52,6 +58,7 @@ public class BoardListViewAdapter extends ArrayAdapter<Post> {
             desc.setText(item.Description);
             author.setText("By " + item.Author);
             Log.println(Log.DEBUG, "DEBUG", "Item " + item.Title + " Connected");
+
         }
         Log.println(Log.DEBUG, "DEBUG", position + "Returned");
 
